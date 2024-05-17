@@ -1,28 +1,29 @@
 import axios from "./AxiosManager";
+import { defaultAxiosConfig } from "../helpers/constants";
 
 class APIManager {
   getProvider() {
     return axios;
   }
 
-  sendPost(url, data) {
-    return this.getProvider().post(url, data);
+  sendPost(url, data, config = defaultAxiosConfig) {
+    return this.getProvider().post(url, data, config);
   }
 
-  sendPut(url, data) {
-    return this.getProvider().put(url, data);
+  sendPut(url, data, config = defaultAxiosConfig) {
+    return this.getProvider().put(url, data, config);
   }
 
-  sendPatch(url, data) {
-    return this.getProvider().patch(url, data);
+  sendPatch(url, data, config = defaultAxiosConfig) {
+    return this.getProvider().patch(url, data, config);
   }
 
-  sendGet(url) {
-    return this.getProvider().get(url);
+  sendGet(url, config = defaultAxiosConfig) {
+    return this.getProvider().get(url, config);
   }
 
-  sendDelete(url) {
-    return this.getProvider().delete(url);
+  sendDelete(url, config = defaultAxiosConfig) {
+    return this.getProvider().delete(url, config);
   }
 }
 
