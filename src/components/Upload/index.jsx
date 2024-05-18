@@ -7,27 +7,83 @@ import { getErrMsg } from "../../utils/helpers/functions";
 
 function Upload() {
   const [title, setTitle] = useState("");
-  const [file, setFile] = useState();
+  const [file, setFile] = useState(null);
+
+  const uploadInChunks = async (file, title) => {
+    console.log("File: ", file);
+
+    try {
+      const initUpload = await UploadServices.initialize(); // Initializing the multipart upload
+
+      if (!initUpload.data.success) {
+        return;
+      }
+
+      const { uploadId, videoId, videoPath } = initUpload.data;
+
+      const fileSize = file.size;
+      const chunkSize = 5 * 1024 * 1024; // Chunk size in MB (Here, 5 MB)
+      const totalChunks = Math.ceil(fileSize / chunkSize);
+      console.log("Total chunks: ", totalChunks);
+
+      const chunkPromises = [];
+
+      for (let i = 0; i < totalChunks; ++i) {
+        const from = chunkSize * i;
+        const to = from + chunkSize;
+        const chunk = file.slice(from, to);
+
+        console.log("Uploading chunk: ", i);
+        const formData = new FormData();
+        formData.append("file", chunk);
+        formData.append("index", i);
+        formData.append("uploadId", uploadId);
+        formData.append("videoPath", videoPath);
+
+        // Uploading the chunks in parallel (without await) => faster with improved performance
+        const chunkPromise = UploadServices.chunk(formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        chunkPromises.push(chunkPromise);
+      }
+
+      // Awaiting for all the chunks to be uploaded
+      await Promise.all(chunkPromises);
+
+      const completeUpload = await UploadServices.complete({
+        uploadId,
+        title,
+        videoId,
+        videoPath,
+      });
+
+      console.log("Upload complete");
+
+      return completeUpload.data;
+    } catch (err) {
+      console.log("Error uploading chunks: ", err);
+    }
+  };
 
   const handleUpload = async (e) => {
     e.preventDefault();
 
-    if (!title) {
-      return toast.info("Title is required.");
+    if (!file) {
+      return toast.info("Please select a video file to upload");
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", title);
+    if (!title) {
+      return toast.info("Title is required");
+    }
 
     try {
-      const { data } = await UploadServices.video(formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const data = await uploadInChunks(file, title);
 
       if (data.success) {
+        console.log("New video: ", data);
         toast.success("Video uploaded");
       }
     } catch (err) {
