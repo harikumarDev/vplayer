@@ -1,13 +1,27 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Input } from "@mui/material";
+import { Box, Button, TextField, Input, CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
 import Layout from "../Layout";
 import { UploadServices } from "../../services";
 import { getErrMsg } from "../../utils/helpers/functions";
 
 function Upload() {
-  const [title, setTitle] = useState("");
-  const [file, setFile] = useState(null);
+  const [form, setForm] = useState({
+    title: "",
+    video: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    const updatedForm = {
+      ...form,
+      [name]: name === "video" ? files[0] : value,
+    };
+
+    setForm(updatedForm);
+  };
 
   const uploadInChunks = async (file, title) => {
     console.log("File: ", file);
@@ -71,23 +85,40 @@ function Upload() {
   const handleUpload = async (e) => {
     e.preventDefault();
 
-    if (!file) {
+    const { title, video } = form;
+
+    if (!video) {
       return toast.info("Please select a video file to upload");
+    }
+
+    // Limiting the file size as it is a test app and to avoid huge AWS bill (-_-)
+    const MAX_FILE_SIZE = 250 * 1024 * 1024; // 250 MB
+    if (video.size > MAX_FILE_SIZE) {
+      return toast.info("Select a file less than a 250 MB");
     }
 
     if (!title) {
       return toast.info("Title is required");
     }
 
+    setLoading(true);
     try {
-      const data = await uploadInChunks(file, title);
+      const data = await uploadInChunks(video, title);
 
       if (data.success) {
         console.log("New video: ", data);
+
+        setForm({
+          title: "",
+          video: "",
+        });
+
         toast.success("Video uploaded");
       }
     } catch (err) {
       toast.error(getErrMsg(err));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,15 +136,16 @@ function Upload() {
               label="Title"
               variant="outlined"
               size="small"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={form.title}
+              onChange={handleChange}
               required
             />
             <Input
+              name="video"
               type="file"
               variant="standard"
               size="small"
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={handleChange}
               inputProps={{
                 accept: "video/mp4,video/x-m4v,video/*",
               }}
@@ -123,12 +155,12 @@ function Upload() {
               type="submit"
               size="small"
               variant="contained"
-              color="inherit"
               style={{
                 marginTop: "0.5em",
               }}
+              disabled={loading}
             >
-              Submit
+              {loading ? <CircularProgress size={24} /> : "Submit"}
             </Button>
           </form>
         </div>
