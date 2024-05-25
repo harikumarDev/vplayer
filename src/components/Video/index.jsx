@@ -7,7 +7,7 @@ import Layout from "../Layout";
 import Player from "./Player";
 import { VideoServices } from "../../services";
 import { getPlayerOptions } from "../../utils/helpers/constants";
-import { getErrMsg } from "../../utils/helpers/functions";
+import { formatCreatedAt, getErrMsg } from "../../utils/helpers/functions";
 
 function Video() {
   const { videoId } = useParams();
@@ -59,21 +59,44 @@ function Video() {
                 <span className="relative inline-block w-8">
                   <img
                     className="h-8 w-8 rounded-full"
-                    src={`https://eu.ui-avatars.com/api/?name=${"user.name"}`}
-                    alt={"user.name"}
+                    src={`https://eu.ui-avatars.com/api/?name=${video.user.name}`}
+                    alt={video.user.name}
                   />
                 </span>
               </div>
-              <div>
-                <Typography>Title</Typography>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  component="p"
-                  margin={0}
-                >
-                  User
+              <div className="-mt-1">
+                <Typography component="div" fontWeight={700}>
+                  {video.title}
                 </Typography>
+                <div className="flex items-center gap-1">
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                    margin={0}
+                    fontWeight={500}
+                    fontSize={14}
+                  >
+                    {video.user.name}
+                  </Typography>
+                  <Typography
+                    component="span"
+                    color="textSecondary"
+                    fontSize={12}
+                  >
+                    &#8226;
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                    margin={0}
+                    fontWeight={500}
+                    fontSize={14}
+                  >
+                    {formatCreatedAt(video.createdAt)}
+                  </Typography>
+                </div>
               </div>
             </div>
           </div>

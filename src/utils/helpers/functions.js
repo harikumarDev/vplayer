@@ -1,3 +1,5 @@
+import { formatDistanceToNow } from "date-fns";
+
 export const getErrMsg = (err) => {
   return err.response?.data?.message || "Something went wrong";
 };
@@ -14,4 +16,10 @@ export const validateForm = (form, optional = []) => {
   }
 
   return isValid;
+};
+
+export const formatCreatedAt = (createdAt) => {
+  return formatDistanceToNow(new Date(createdAt), {
+    addSuffix: true,
+  }).replace(/^about /, "");
 };
