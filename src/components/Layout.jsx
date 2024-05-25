@@ -39,7 +39,7 @@ function Layout({ children, ...props }) {
 
   return (
     <div>
-      <div className="shadow-md w-full fixed top-0 left-0">
+      <div className="shadow-md w-full fixed top-0 left-0 z-30">
         <header
           className={`flex items-center justify-between py-2 px-7 ${
             theme === "light" ? "bg-white" : "bg-gray-800"
@@ -72,7 +72,7 @@ function Layout({ children, ...props }) {
                     >
                       <span className="relative inline-block">
                         <img
-                          className="h-7 w-7 rounded-full"
+                          className="h-8 w-8 rounded-full"
                           src={`https://eu.ui-avatars.com/api/?name=${user.name}`}
                           alt={user.name}
                         />

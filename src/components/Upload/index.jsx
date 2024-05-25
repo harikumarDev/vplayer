@@ -1,16 +1,37 @@
-import React, { useState } from "react";
-import { Box, Button, TextField, Input, CircularProgress } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button, TextField, Input, CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
 import Layout from "../Layout";
-import { UploadServices } from "../../services";
+import { useUserStore } from "../../utils/store";
+import { UploadServices, VideoServices } from "../../services";
 import { getErrMsg } from "../../utils/helpers/functions";
+import Videos from "../Video/Videos";
 
 function Upload() {
+  const { user } = useUserStore();
+
   const [form, setForm] = useState({
     title: "",
     video: "",
   });
   const [loading, setLoading] = useState(false);
+  const [uploadedVideos, setUploadedVideos] = useState(null);
+
+  const getUploadedVideos = async (userId) => {
+    try {
+      const { data } = await VideoServices.getUploaded(userId);
+
+      if (data.success) {
+        setUploadedVideos(data.videos);
+      }
+    } catch (err) {
+      toast.error(getErrMsg(err));
+    }
+  };
+
+  useEffect(() => {
+    getUploadedVideos(user._id);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -112,7 +133,7 @@ function Upload() {
           title: "",
           video: "",
         });
-
+        await getUploadedVideos(user._id);
         toast.success("Video uploaded");
       }
     } catch (err) {
@@ -165,10 +186,12 @@ function Upload() {
           </form>
         </div>
 
-        <Box className="mt-4">
+        <div className="mt-4">
           <h3 className="text-2xl font-bold">My videos</h3>
-          <div></div>
-        </Box>
+          <div>
+            <Videos data={uploadedVideos} className="py-5" />
+          </div>
+        </div>
       </div>
     </Layout>
   );

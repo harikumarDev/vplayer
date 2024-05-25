@@ -33,8 +33,11 @@ function Signup() {
     e.preventDefault();
 
     if (!validateForm(form)) {
-      toast.error("Please fill all the fields");
-      return;
+      return toast.error("Please fill all the fields");
+    }
+
+    if (form.name.length > 30) {
+      return toast.error("Name cannot be more than 30 characters");
     }
 
     setDisabled(true);

@@ -15,7 +15,7 @@ function ProtectedRoute({ children }) {
     }
   }, [isLoggedIn]);
 
-  return isLoggedIn ? children : <Navigate to={`/login${query}`} />;
+  return isLoggedIn ? children : <Navigate replace to={`/login${query}`} />;
 }
 
 export default ProtectedRoute;

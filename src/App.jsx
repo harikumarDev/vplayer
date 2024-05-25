@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { useThemeStore } from "./utils/store";
-import { Home, Login, Signup, Upload } from "./components";
+import { Home, Login, Signup, Upload, Video } from "./components";
 import { lightTheme, darkTheme } from "./utils/theme";
 
 function App() {
@@ -20,6 +20,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/watch/:videoId" element={<Video />} />
 
           <Route
             path="/upload"
