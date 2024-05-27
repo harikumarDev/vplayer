@@ -10,5 +10,7 @@ export const RestEnds = {
   ABORT_UPLOAD: "/api/v1/upload/abort",
   ALL_VIDEOS: "/api/v1/videos",
   VIDEO_BY_ID: (videoId) => `/api/v1/videos/${videoId}`,
+  EDIT_VIDEO: (videoId) => `/api/v1/videos/${videoId}`,
+  DELETE_VIDEO: (videoId) => `/api/v1/videos/${videoId}`,
   UPLOADED_VIDEOS: (userId) => `/api/v1/videos/user/${userId}`,
 };

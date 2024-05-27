@@ -13,6 +13,11 @@ dist-ssr
 *.local
 
 .env
+.env.development
+.env.production
+
+# Test hls folder
+public/hls/
 
 # Editor directories and files
 .vscode/*

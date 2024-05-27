@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, TextField, Input, CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
 import Layout from "../Layout";
-import { useUserStore } from "../../utils/store";
-import { UploadServices, VideoServices } from "../../services";
-import { getErrMsg } from "../../utils/helpers/functions";
 import Videos from "../Video/Videos";
+import useExistPrompt from "../../hooks/useExistPrompt";
+import { UploadServices, VideoServices } from "../../services";
+import { useUserStore } from "../../utils/store";
+import { getErrMsg } from "../../utils/helpers/functions";
 
 function Upload() {
   const { user } = useUserStore();
@@ -14,6 +15,7 @@ function Upload() {
     title: "",
     video: "",
   });
+  const [showExitPrompt, setShowExitPrompt] = useExistPrompt(false);
   const [loading, setLoading] = useState(false);
   const [uploadedVideos, setUploadedVideos] = useState(null);
 
@@ -32,6 +34,14 @@ function Upload() {
   useEffect(() => {
     getUploadedVideos(user._id);
   }, []);
+
+  useEffect(() => {
+    setShowExitPrompt(loading);
+
+    return () => {
+      setShowExitPrompt(false);
+    };
+  }, [loading]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -189,7 +199,12 @@ function Upload() {
         <div className="mt-4">
           <h3 className="text-2xl font-bold">My videos</h3>
           <div>
-            <Videos data={uploadedVideos} className="py-5" />
+            <Videos
+              data={uploadedVideos}
+              className="py-5"
+              showEditOptions
+              getVideos={getUploadedVideos}
+            />
           </div>
         </div>
       </div>

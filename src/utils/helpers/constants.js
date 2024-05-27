@@ -10,7 +10,7 @@ export const getPlayerOptions = (url, overrideNative) => ({
   controls: true,
   responsive: true,
   fluid: true,
-  playbackRates: [0.5, 1, 1.5, 2],
+  playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
   controlBar: {
     playToggle: true,
     volumePanel: {
@@ -24,6 +24,7 @@ export const getPlayerOptions = (url, overrideNative) => ({
   html5: {
     vhs: {
       overrideNative: overrideNative,
+      withCredentials: true,
     },
     nativeVideoTracks: !overrideNative,
     nativeAudioTracks: !overrideNative,
@@ -33,7 +34,6 @@ export const getPlayerOptions = (url, overrideNative) => ({
     {
       src: url,
       type: "application/x-mpegURL",
-      crossOrigin: "use-credentials",
     },
   ],
 });
